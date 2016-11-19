@@ -25,7 +25,7 @@ app.init = function(){
     wireframe: false,
     map: THREE.ImageUtils.loadTexture("<%= asset_path('earth.jpg') %>"),
     bumpMap: THREE.ImageUtils.loadTexture("<%= asset_path('bumpmap.jpg') %>"),
-    bumpScale: 2.05
+    bumpScale: 0.05
   });
 
   app.earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -38,10 +38,10 @@ app.init = function(){
 
   app.clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
 
-  var light = new THREE.DirectionalLight(0xffffff);
-  light.position.set(0,1,1).normalize();
+  app.light = new THREE.DirectionalLight(0xffffff);
+  app.light.position.set(0,1,1).normalize();
 
-  app.scene.add(new THREE.AmbientLight(0x333333), app.earth, app.clouds);
+  app.scene.add(new THREE.AmbientLight(0x333333), app.earth, app.clouds, app.light);
 
 
 
