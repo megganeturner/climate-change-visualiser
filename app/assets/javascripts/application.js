@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require leaflet
+//= require data
 //= require d3
 //= require topojson
 //= require datamaps

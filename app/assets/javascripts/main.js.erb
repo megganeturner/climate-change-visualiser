@@ -1,126 +1,174 @@
-var app = app || {};
-
-app.init = function(){
-
-  app.scene = new THREE.Scene();
-  app.width = window.innerWidth;
-  app.height = window.innerHeight;
-
-  app.camera = new THREE.PerspectiveCamera(75, app.width/app.height, 0.1, 1000);
-
-  app.camera.position.x = 0;
-  app.camera.position.y = 0;
-  app.camera.position.z = 200;
-
-  app.camera.lookAt(app.scene.position);
-
-  app.renderer = new THREE.WebGLRenderer();
-  app.renderer.setSize(app.width, app.height);
-  document.body.appendChild(app.renderer.domElement);
-
-  // app.canvas = document.createElement('canvas');
-  // app.canvasContext = app.canvas.getContext("2d");
-  // app.dataTexture = new THREE.Texture(app.canvas);
-  // var dataGeometry = new THREE.SphereGeometry(3, 32, 32);
-  // var dataMaterial = new THREE.MeshPhongMaterial({
-  //   color: 0xffffff,
-  //   wireframe: true,
-  //   map: app.dataTexture
-  // });
-  //
-  // app.dataLayer = new THREE.Mesh(dataGeometry, dataMaterial);
-
-  var earthGeometry = new THREE.SphereGeometry(2, 32, 32);
-  var earthMaterial = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    wireframe: false,
-    map: THREE.ImageUtils.loadTexture("<%= asset_path('greyscale.png') %>")
-    // bumpMap: THREE.ImageUtils.loadTexture("<%= asset_path('bumpmap.jpg') %>"),
-    // bumpScale: 0.05
-  });
-
-  app.earth = new THREE.Mesh(earthGeometry, earthMaterial);
-
-  var cloudGeometry = new THREE.SphereGeometry(2.03, 32, 32);
-  var cloudMaterial = new THREE.MeshPhongMaterial({
-    map: THREE.ImageUtils.loadTexture("<%= asset_path('clouds.png') %>"),
-    transparent: true
-  });
-
-  app.clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
-
-  app.light = new THREE.DirectionalLight(0xffffff);
-  app.light.position.set(0,1,1).normalize();
-
-  app.scene.add(new THREE.AmbientLight(0x333333), app.earth, app.clouds, app.light, app.dataLayer);
-
-
-
-  app.controls = new THREE.TrackballControls(app.camera);
-
-  app.animate();
-};
-
-
-app.animate = function(){
-
-  if (app.camera.position.z >=200) {
-    app.camera.position.z = 200;
-  }
-
-
-
-  if (app.camera.position.z < 150) {
-    $('.saganQuote').fadeOut(1000);
-    $('.scrollToZoom').fadeOut(1000);
-  } else {
-    $('.saganQuote').fadeIn(1000);
-    $('.scrollToZoom').fadeIn(1000);
-  }
-
-  app.controls.update();
-
-  app.earth.rotation.y += 0.002;
-  app.clouds.rotation.y += 0.003;
-
-  app.renderer.render(app.scene, app.camera);
-
-  requestAnimationFrame(app.animate);
-};
-
-
-var countryColorMap = {'PE':1,
-'BF':2,'FR':3,'LY':4,'BY':5,'PK':6,'ID':7,'YE':8,'MG':9,'BO':10,'CI':11,'DZ':12,'CH':13,'CM':14,'MK':15,'BW':16,'UA':17,
-'KE':18,'TW':19,'JO':20,'MX':21,'AE':22,'BZ':23,'BR':24,'SL':25,'ML':26,'CD':27,'IT':28,'SO':29,'AF':30,'BD':31,'DO':32,'GW':33,
-'GH':34,'AT':35,'SE':36,'TR':37,'UG':38,'MZ':39,'JP':40,'NZ':41,'CU':42,'VE':43,'PT':44,'CO':45,'MR':46,'AO':47,'DE':48,'SD':49,
-'TH':50,'AU':51,'PG':52,'IQ':53,'HR':54,'GL':55,'NE':56,'DK':57,'LV':58,'RO':59,'ZM':60,'IR':61,'MM':62,'ET':63,'GT':64,'SR':65,
-'EH':66,'CZ':67,'TD':68,'AL':69,'FI':70,'SY':71,'KG':72,'SB':73,'OM':74,'PA':75,'AR':76,'GB':77,'CR':78,'PY':79,'GN':80,'IE':81,
-'NG':82,'TN':83,'PL':84,'NA':85,'ZA':86,'EG':87,'TZ':88,'GE':89,'SA':90,'VN':91,'RU':92,'HT':93,'BA':94,'IN':95,'CN':96,'CA':97,
-'SV':98,'GY':99,'BE':100,'GQ':101,'LS':102,'BG':103,'BI':104,'DJ':105,'AZ':106,'MY':107,'PH':108,'UY':109,'CG':110,'RS':111,'ME':112,'EE':113,
-'RW':114,'AM':115,'SN':116,'TG':117,'ES':118,'GA':119,'HU':120,'MW':121,'TJ':122,'KH':123,'KR':124,'HN':125,'IS':126,'NI':127,'CL':128,'MA':129,
-'LR':130,'NL':131,'CF':132,'SK':133,'LT':134,'ZW':135,'LK':136,'IL':137,'LA':138,'KP':139,'GR':140,'TM':141,'EC':142,'BJ':143,'SI':144,'NO':145,
-'MD':146,'LB':147,'NP':148,'ER':149,'US':150,'KZ':151,'AQ':152,'SZ':153,'UZ':154,'MN':155,'BT':156,'NC':157,'FJ':158,'KW':159,'TL':160,'BS':161,
-'VU':162,'FK':163,'GM':164,'QA':165,'JM':166,'CY':167,'PR':168,'PS':169,'BN':170,'TT':171,'CV':172,'PF':173,'WS':174,'LU':175,'KM':176,'MU':177,
-'FO':178,'ST':179,'AN':180,'DM':181,'TO':182,'KI':183,'FM':184,'BH':185,'AD':186,'MP':187,'PW':188,'SC':189,'AG':190,'BB':191,'TC':192,'VC':193,
-'LC':194,'YT':195,'VI':196,'GD':197,'MT':198,'MV':199,'KY':200,'KN':201,'MS':202,'BL':203,'NU':204,'PM':205,'CK':206,'WF':207,'AS':208,'MH':209,
-'AW':210,'LI':211,'VG':212,'SH':213,'JE':214,'AI':215,'MF_1_':216,'GG':217,'SM':218,'BM':219,'TV':220,'NR':221,'GI':222,'PN':223,'MC':224,'VA':225,
-'IM':226,'GU':227,'SG':228};
-
-
-
-app.onResize = function(){
-  app.width = window.innerWidth;
-  app.height = window.innerHeight;
-
-  app.camera.aspect = app.width / app.height;
-  app.camera.updateProjectionMatrix();
-
-  app.renderer.setSize(app.width, app.height);
-};
-
-window.addEventListener("resize", app.onResize, false);
-
 
 $(document).ready(function(){
-  app.init();
-});
+
+  var map = L.map('mapid').setView([37.8, -96], 3);
+
+  L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWVnZ2FuZXR1cm5lciIsImEiOiJjaXZzbndkNGMwNmh4Mm9xdjBrc3M5bWRnIn0.pLddetTUFbU0TYI8eWQ3sA', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18
+  }).addTo(map);
+
+  L.geoJson(countriesData).addTo(map);
+
+
+  function getColor(e) {
+      return e > 10000 ? '#014636' :
+             e > 5000  ? '#016c59' :
+             e > 2500  ? '#02818a' :
+             e > 1000  ? '#3690c0' :
+             e > 750   ? '#67a9cf' :
+             e > 500   ? '#a6bddb' :
+             e > 100   ? '#d0d1e6' :
+             e > 50    ? '#ece2f0' :
+                         '#fff7fb';
+  };
+
+  function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.total),
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        // dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+L.geoJson(countriesData, {style: style}).addTo(map);
+
+
+
+
+})
+
+
+// var app = app || {};
+//
+// app.init = function(){
+//
+//   app.scene = new THREE.Scene();
+//   app.width = window.innerWidth;
+//   app.height = window.innerHeight;
+//
+//   app.camera = new THREE.PerspectiveCamera(75, app.width/app.height, 0.1, 1000);
+//
+//   app.camera.position.x = 0;
+//   app.camera.position.y = 0;
+//   app.camera.position.z = 200;
+//
+//   app.camera.lookAt(app.scene.position);
+//
+//   app.renderer = new THREE.WebGLRenderer();
+//   app.renderer.setSize(app.width, app.height);
+//   document.body.appendChild(app.renderer.domElement);
+//
+//   // app.canvas = document.createElement('canvas');
+//   // app.canvasContext = app.canvas.getContext("2d");
+//   // app.dataTexture = new THREE.Texture(app.canvas);
+//   // var dataGeometry = new THREE.SphereGeometry(3, 32, 32);
+//   // var dataMaterial = new THREE.MeshPhongMaterial({
+//   //   color: 0xffffff,
+//   //   wireframe: true,
+//   //   map: app.dataTexture
+//   // });
+//   //
+//   // app.dataLayer = new THREE.Mesh(dataGeometry, dataMaterial);
+//
+//   var earthGeometry = new THREE.SphereGeometry(2, 32, 32);
+//   var earthMaterial = new THREE.MeshPhongMaterial({
+//     color: 0xffffff,
+//     wireframe: false,
+//     map: THREE.ImageUtils.loadTexture("<%= asset_path('greyscale.png') %>")
+//     // bumpMap: THREE.ImageUtils.loadTexture("<%= asset_path('bumpmap.jpg') %>"),
+//     // bumpScale: 0.05
+//   });
+//
+//   app.earth = new THREE.Mesh(earthGeometry, earthMaterial);
+//
+//   var cloudGeometry = new THREE.SphereGeometry(2.03, 32, 32);
+//   var cloudMaterial = new THREE.MeshPhongMaterial({
+//     map: THREE.ImageUtils.loadTexture("<%= asset_path('clouds.png') %>"),
+//     transparent: true
+//   });
+//
+//   app.clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+//
+//   app.light = new THREE.DirectionalLight(0xffffff);
+//   app.light.position.set(0,1,1).normalize();
+//
+//   app.scene.add(new THREE.AmbientLight(0x333333), app.earth, app.clouds, app.light, app.dataLayer);
+//
+//
+//
+//   app.controls = new THREE.TrackballControls(app.camera);
+//
+//   app.animate();
+// };
+//
+//
+// app.animate = function(){
+//
+//   if (app.camera.position.z >=200) {
+//     app.camera.position.z = 200;
+//   }
+//
+//
+//
+//   if (app.camera.position.z < 150) {
+//     $('.saganQuote').fadeOut(1000);
+//     $('.scrollToZoom').fadeOut(1000);
+//   } else {
+//     $('.saganQuote').fadeIn(1000);
+//     $('.scrollToZoom').fadeIn(1000);
+//   }
+//
+//   app.controls.update();
+//
+//   app.earth.rotation.y += 0.002;
+//   app.clouds.rotation.y += 0.003;
+//
+//   app.renderer.render(app.scene, app.camera);
+//
+//   requestAnimationFrame(app.animate);
+// };
+//
+// // var projector  = new THREE.Projector(),
+// // 	mouse2D    = new THREE.Vector3( 0, 0, 0.5 ),
+// // 	mapCanvas, mapContext, lookupCanvas, lookupContext, lookupTexture, composer;
+//
+//
+// var countryColorMap = {'PE':1,
+// 'BF':2,'FR':3,'LY':4,'BY':5,'PK':6,'ID':7,'YE':8,'MG':9,'BO':10,'CI':11,'DZ':12,'CH':13,'CM':14,'MK':15,'BW':16,'UA':17,
+// 'KE':18,'TW':19,'JO':20,'MX':21,'AE':22,'BZ':23,'BR':24,'SL':25,'ML':26,'CD':27,'IT':28,'SO':29,'AF':30,'BD':31,'DO':32,'GW':33,
+// 'GH':34,'AT':35,'SE':36,'TR':37,'UG':38,'MZ':39,'JP':40,'NZ':41,'CU':42,'VE':43,'PT':44,'CO':45,'MR':46,'AO':47,'DE':48,'SD':49,
+// 'TH':50,'AU':51,'PG':52,'IQ':53,'HR':54,'GL':55,'NE':56,'DK':57,'LV':58,'RO':59,'ZM':60,'IR':61,'MM':62,'ET':63,'GT':64,'SR':65,
+// 'EH':66,'CZ':67,'TD':68,'AL':69,'FI':70,'SY':71,'KG':72,'SB':73,'OM':74,'PA':75,'AR':76,'GB':77,'CR':78,'PY':79,'GN':80,'IE':81,
+// 'NG':82,'TN':83,'PL':84,'NA':85,'ZA':86,'EG':87,'TZ':88,'GE':89,'SA':90,'VN':91,'RU':92,'HT':93,'BA':94,'IN':95,'CN':96,'CA':97,
+// 'SV':98,'GY':99,'BE':100,'GQ':101,'LS':102,'BG':103,'BI':104,'DJ':105,'AZ':106,'MY':107,'PH':108,'UY':109,'CG':110,'RS':111,'ME':112,'EE':113,
+// 'RW':114,'AM':115,'SN':116,'TG':117,'ES':118,'GA':119,'HU':120,'MW':121,'TJ':122,'KH':123,'KR':124,'HN':125,'IS':126,'NI':127,'CL':128,'MA':129,
+// 'LR':130,'NL':131,'CF':132,'SK':133,'LT':134,'ZW':135,'LK':136,'IL':137,'LA':138,'KP':139,'GR':140,'TM':141,'EC':142,'BJ':143,'SI':144,'NO':145,
+// 'MD':146,'LB':147,'NP':148,'ER':149,'US':150,'KZ':151,'AQ':152,'SZ':153,'UZ':154,'MN':155,'BT':156,'NC':157,'FJ':158,'KW':159,'TL':160,'BS':161,
+// 'VU':162,'FK':163,'GM':164,'QA':165,'JM':166,'CY':167,'PR':168,'PS':169,'BN':170,'TT':171,'CV':172,'PF':173,'WS':174,'LU':175,'KM':176,'MU':177,
+// 'FO':178,'ST':179,'AN':180,'DM':181,'TO':182,'KI':183,'FM':184,'BH':185,'AD':186,'MP':187,'PW':188,'SC':189,'AG':190,'BB':191,'TC':192,'VC':193,
+// 'LC':194,'YT':195,'VI':196,'GD':197,'MT':198,'MV':199,'KY':200,'KN':201,'MS':202,'BL':203,'NU':204,'PM':205,'CK':206,'WF':207,'AS':208,'MH':209,
+// 'AW':210,'LI':211,'VG':212,'SH':213,'JE':214,'AI':215,'MF_1_':216,'GG':217,'SM':218,'BM':219,'TV':220,'NR':221,'GI':222,'PN':223,'MC':224,'VA':225,
+// 'IM':226,'GU':227,'SG':228};
+//
+//
+//
+// app.onResize = function(){
+//   app.width = window.innerWidth;
+//   app.height = window.innerHeight;
+//
+//   app.camera.aspect = app.width / app.height;
+//   app.camera.updateProjectionMatrix();
+//
+//   app.renderer.setSize(app.width, app.height);
+// };
+//
+// window.addEventListener("resize", app.onResize, false);
+//
+//
+// $(document).ready(function(){
+//   app.init();
+// });
