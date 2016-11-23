@@ -65,6 +65,12 @@ app.animate = function(){
     $('.scrollToZoom').fadeIn(1000);
   }
 
+  if (app.camera.position.z < 80) {
+    $('#homeMenu').fadeIn(1000);
+  } else {
+    $('#homeMenu').fadeOut(1000);
+  }
+
   app.controls.update();
 
   app.earth.rotation.y += 0.002;
@@ -100,9 +106,11 @@ $(document).ready(function(){
         onEachFeature: onEachFeature
       }).addTo(app.map);
       legend.addTo(app.map);
-      // if ($('#mapid').hasClass('vulnerability')) {
-      //
-      // }
+      if ($('#mapid').hasClass('vulnerability')) {
+        $('#mapToggler').text('Which countries are responsible?');
+      } else {
+        $('#mapToggler').text('Which countries are most vulnerable?')
+      }
     });
 
     app.map = L.map('mapid', null, {zoomControl:false}).setView([10, 0], 2.1);
@@ -135,9 +143,9 @@ $(document).ready(function(){
     };
 
     var getRankColor = function(r) {
-      return r > 136 ? '#02818a' :
-             r > 91  ? '#67a9cf' :
-             r > 45  ? '#bdc9e1' :
+      return r > 136 ? '#014636' :
+             r > 91  ? '#02818a' :
+             r > 45  ? '#a6bddb' :
                        '#f6eff7';
     }
 
@@ -210,7 +218,7 @@ $(document).ready(function(){
 
     info.update = function(props) {
       if ($('.vulnerability').length > 0) {
-        this._div.innerHTML = '<h4>Vulnerability</h4><br>' + (props ? props.name + ': <br><br>' + props.rank : 'Hover over a country');
+        this._div.innerHTML = '<h4>Vulnerability Ranking</h4><br>' + (props ? props.name + ': <br><br>' + props.rank : 'Hover over a country');
       } else {
         this._div.innerHTML = '<h4>Total Greenhouse Gas Emissions for 2012</h4><br>' + (props ? props.name + ': <br><br>' + props.emissions + ' MtCO<sub>2</sub>e' : 'Hover over a country');
       }
@@ -234,7 +242,7 @@ $(document).ready(function(){
       for (var i = 0; i < grades.length; i++) {
         if ($('.vulnerability').length > 0) {
           div.innerHTML +=
-            '<span style="background:' + getRankColor(grades[i] + 1) + '"></span> ' +
+            '<span style="background:' + getRankColor(grades[i]) + '"></span> ' +
             grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
         } else {
           div.innerHTML +=
