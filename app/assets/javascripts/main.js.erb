@@ -96,6 +96,24 @@ $(document).ready(function(){
 
   info.addTo(map);
 
+  var legend = L.control({position: 'bottomright'});
+
+  legend.onAdd = function(map) {
+    var div = L.DomUtil.create('div', 'legend'),
+        grades = [10000, 5000, 2500, 1000, 750, 500, 100, 50],
+        labels = [];
+
+    for (var i = 0; i < grades.length; i++) {
+      div.innerHTML +=
+        '<span style="background:' + getColor(grades[i] + 1) + '"></span> ' +
+        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+    return div;
+  }
+
+  legend.addTo(map);
+
+
 
 
 

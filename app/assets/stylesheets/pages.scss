@@ -53,9 +53,10 @@ canvas {
   position: fixed;
   top: 10px;
   right: 10px;
-  padding: 5px;
+  padding: 10px;
   background-color: #fff;
   border-radius: 2px;
+  height: 100px;
 
     //
     // padding: 6px 8px;
@@ -68,4 +69,18 @@ canvas {
 .info h4 {
     margin: 0 0 5px;
     color: #777;
+}
+.legend {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #fff;
+  padding: 10px;
+}
+.legend span {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
 }
