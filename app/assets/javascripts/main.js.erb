@@ -92,6 +92,19 @@ $(document).ready(function(){
 
   if ($(".pages.emissions").length > 0) {
 
+    $('#mapToggler').on('click', function(){
+      $('#mapid').toggleClass('vulnerability');
+      L.geoJson(countriesData, {style: style}).addTo(app.map);
+      geojson = L.geoJson(countriesData, {
+        style: style,
+        onEachFeature: onEachFeature
+      }).addTo(app.map);
+      legend.addTo(app.map);
+      // if ($('#mapid').hasClass('vulnerability')) {
+      //
+      // }
+    });
+
     app.map = L.map('mapid', null, {zoomControl:false}).setView([10, 0], 2.1);
     app.map.dragging.disable();
 
@@ -109,7 +122,7 @@ $(document).ready(function(){
     L.geoJson(countriesData).addTo(app.map);
 
 
-    var getColor = function(e) {
+    var getEmissionsColor = function(e) {
         return e > 10000 ? '#014636' :
                e > 5000  ? '#016c59' :
                e > 2500  ? '#02818a' :
@@ -121,9 +134,23 @@ $(document).ready(function(){
                            '#fff7fb';
     };
 
+    var getRankColor = function(r) {
+      return r > 136 ? '#02818a' :
+             r > 91  ? '#67a9cf' :
+             r > 45  ? '#bdc9e1' :
+                       '#f6eff7';
+    }
+
     var style = function(feature) {
+      var fillColor;
+      if ($('.vulnerability').length > 0) {
+        fillColor = getRankColor(feature.properties.rank)
+      } else {
+        fillColor = getEmissionsColor(feature.properties.emissions);
+      }
+
       return {
-          fillColor: getColor(feature.properties.emissions),
+          fillColor: fillColor,
           weight: 1,
           opacity: 1,
           color: 'white',
@@ -182,7 +209,11 @@ $(document).ready(function(){
     };
 
     info.update = function(props) {
-      this._div.innerHTML = '<h4>Total Greenhouse Gas Emissions for 2012</h4><br>' + (props ? props.name + ': <br><br>' + props.emissions + ' MtCO<sub>2</sub>e' : 'Hover over a country');
+      if ($('.vulnerability').length > 0) {
+        this._div.innerHTML = '<h4>Vulnerability</h4><br>' + (props ? props.name + ': <br><br>' + props.rank : 'Hover over a country');
+      } else {
+        this._div.innerHTML = '<h4>Total Greenhouse Gas Emissions for 2012</h4><br>' + (props ? props.name + ': <br><br>' + props.emissions + ' MtCO<sub>2</sub>e' : 'Hover over a country');
+      }
     };
 
     info.addTo(app.map);
@@ -190,14 +221,26 @@ $(document).ready(function(){
     var legend = L.control({position: 'bottomright'});
 
     legend.onAdd = function(map) {
+      var grades;
+      if ($('.vulnerability').length > 0) {
+        grades = [182, 136, 91, 45];
+      } else {
+        grades = [10000, 5000, 2500, 1000, 750, 500, 100, 50]
+      }
       var div = L.DomUtil.create('div', 'legend'),
-          grades = [10000, 5000, 2500, 1000, 750, 500, 100, 50],
+          grades = grades,
           labels = [];
 
       for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-          '<span style="background:' + getColor(grades[i] + 1) + '"></span> ' +
-          grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        if ($('.vulnerability').length > 0) {
+          div.innerHTML +=
+            '<span style="background:' + getRankColor(grades[i] + 1) + '"></span> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        } else {
+          div.innerHTML +=
+            '<span style="background:' + getEmissionsColor(grades[i] + 1) + '"></span> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
       }
       return div;
     }
