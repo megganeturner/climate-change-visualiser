@@ -102,6 +102,13 @@ $(document).ready(function(){
   if ($(".pages.emissions").length > 0) {
 
     $('#mapToggler').on('click', function(){
+      if ($('.moreInfo').hasClass('exposedInfo')) {
+        $('.moreInfo').fadeOut(100, function(){
+          $(this).removeClass('exposedInfo');
+          console.log(this)
+        });
+
+      };
       $('#mapid').toggleClass('vulnerability');
       L.geoJson(countriesData, {style: style}).addTo(app.map);
       geojson = L.geoJson(countriesData, {
@@ -113,7 +120,7 @@ $(document).ready(function(){
         $('#mapToggler').text('Which countries are responsible?');
       } else {
         $('#mapToggler').text('Which countries are most vulnerable?')
-      }
+      };
     });
 
     app.map = L.map('mapid', null, {zoomControl:false}).setView([10, 0], 2.1);
@@ -263,6 +270,18 @@ $(document).ready(function(){
       var value = $('.search').val();
       var result = $.grep(countriesData.features, function(e) {return e.properties.name == value});
       info.update(result[0].properties);
+    });
+
+    $('.expandInfo').on('click', function(){
+      $('.moreInfo').toggleClass('exposedInfo');
+      if ($('.vulnerability').length > 0) {
+        $('.moreInfo').html(
+          'A country\'s vulnerability ranking measures their exposure, sensitivity and their ability to adapt to climate change. Overall vulnerability is based on impact to food, water, health, ecosystem service, human habitat and infrastructure.<br><br>Countries with a darker colour are more vulnerable than those with a lighter colour.<br><br>Data comes from the <a href="http://index.gain.org/" target="_blank">Notre Dame Global Adaptation Index</a>.'
+        );
+      } else {
+        $('.moreInfo').html('This is a measure of the Carbon Dioxide Equivalent that a country emits per year (in metric tons). This equivalent is a calculation of the 6 greenhouse gases, adjusted as if they were all CO<sub>2</sub>.<br><br>To give you an idea of size, 2 metric tons take up the size of an Olympic swimming pool.<br><br>Data comes from the <a href="http://www.wri.org/resources/data-sets/cait-historical-emissions-data-countries-us-states-unfccc" target="_blank">World Resources Institute</a>.')
+      }
+      $('.moreInfo').slideToggle(1000);
     });
 
   } else {
