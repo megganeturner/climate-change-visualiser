@@ -54,6 +54,10 @@ app.animate = function(){
 
   if (app.camera.position.z >=200) {
     app.camera.position.z = 200;
+  };
+
+  if (app.camera.position.z < 4) {
+    app.camera.position.z = 4;
   }
 
   if (app.camera.position.z < 150) {
@@ -64,7 +68,7 @@ app.animate = function(){
     $('.scrollToZoom').fadeIn(1000);
   }
 
-  if (app.camera.position.z < 80) {
+  if (app.camera.position.z < 20) {
     $('#homeMenu').fadeIn(1000);
   } else {
     $('#homeMenu').fadeOut(1000);
@@ -242,11 +246,11 @@ $(document).ready(function(){
         if ($('.vulnerability').length > 0) {
           div.innerHTML +=
             '<span style="background:' + getRankColor(grades[i]) + '"></span> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            grades[i] + (grades[i + 1] ? ' &ndash; ' + grades[i + 1] + '<br>' : '+');
         } else {
           div.innerHTML +=
             '<span style="background:' + getEmissionsColor(grades[i] + 1) + '"></span> ' +
-            (grades[i + 1] ? grades[i + 1] + '&ndash;' : '< ') + grades[i] + '<br>';
+            (grades[i + 1] ? grades[i + 1] + ' &ndash; ' : '< ') + grades[i] + '<br>';
         }
       }
       return div;
@@ -259,7 +263,7 @@ $(document).ready(function(){
       var value = $('.search').val();
       var result = $.grep(countriesData.features, function(e) {return e.properties.name == value});
       info.update(result[0].properties);
-    })
+    });
 
   } else {
     app.init();

@@ -1,9 +1,10 @@
-<button id="mapToggler">Which countries are most vulnerable?</button>
+<%= link_to( image_tag('home.png', :class => 'icon'), root_path) %>
+<button id="mapToggler" class="button">Which countries are most vulnerable?</button>
 
 <div id="mapid">
 </div>
 
-<form id="search">
-  <input type="text" class="search" value="Australia" placeholder="australia">
-  <a href="#" id="go">Search</a>
-</form>
+<div id="search">
+  <input type="text" class="search" placeholder="Australia">
+  <a href="#" id="go" class="button">Search</a>
+</div>
