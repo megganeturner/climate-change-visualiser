@@ -58,10 +58,11 @@ canvas {
   background-color: #fff;
   border-radius: 2px;
   height: 100px;
+  box-shadow: 1px 1px 1px #000;
 }
 .info h4 {
-    margin: 0 0 5px;
-    color: #777;
+  margin: 0 0 5px;
+  color: #777;
 }
 .legend {
   position: fixed;
@@ -69,6 +70,7 @@ canvas {
   right: 10px;
   background-color: #fff;
   padding: 10px;
+  box-shadow: 1px 1px 1px #000;
 }
 .legend span {
   width: 18px;
@@ -102,5 +104,19 @@ canvas {
   font-weight: 300;
   padding: 10px;
   text-align: center;
+
+}
+
+#search {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  width: 350px;
+  margin-left: -100px;
+  z-index: 1000;
+}
+#search
+#go {
+  z-index: 1000;
 
 }
