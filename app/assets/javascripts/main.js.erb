@@ -68,7 +68,7 @@ app.animate = function(){
     $('.scrollToZoom').fadeIn(1000);
   }
 
-  if (app.camera.position.z < 20) {
+  if (app.camera.position.z < 5) {
     $('#homeMenu').fadeIn(1000);
   } else {
     $('#homeMenu').fadeOut(1000);
@@ -221,9 +221,9 @@ $(document).ready(function(){
 
     info.update = function(props) {
       if ($('.vulnerability').length > 0) {
-        this._div.innerHTML = '<h4>Vulnerability Ranking</h4><br>' + (props ? props.name + ': <br><br>' + props.rank : 'Hover over a country');
+        this._div.innerHTML = '<h4>Vulnerability Ranking</h4><br>' + (props ? '<span class="country">' + props.name + ':</span> <br><br> <span class="data">' + props.rank + "</span>" : '<span class="country">Hover over a country</span>');
       } else {
-        this._div.innerHTML = '<h4>Total Greenhouse Gas Emissions for 2012</h4><br>' + (props ? props.name + ': <br><br>' + props.emissions + ' MtCO<sub>2</sub>e' : 'Hover over a country');
+        this._div.innerHTML = '<h4>Total Greenhouse Gas Emissions for 2012</h4><br>' + (props ? '<span class="country">' + props.name + ':</span> <br><br> <span class="data">' + props.emissions + ' MtCO<sub>2</sub>e </span>' : '<span class="country">Hover over a country</span>');
       }
     };
 
@@ -246,7 +246,7 @@ $(document).ready(function(){
         if ($('.vulnerability').length > 0) {
           div.innerHTML +=
             '<span style="background:' + getRankColor(grades[i]) + '"></span> ' +
-            grades[i] + (grades[i + 1] ? ' &ndash; ' + grades[i + 1] + '<br>' : '+');
+            (grades[i + 1] ? grades[i + 1] + ' &ndash; ' : '< ') + grades[i] + '<br>';
         } else {
           div.innerHTML +=
             '<span style="background:' + getEmissionsColor(grades[i] + 1) + '"></span> ' +
