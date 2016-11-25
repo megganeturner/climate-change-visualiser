@@ -14,9 +14,6 @@
 //= require jquery_ujs
 //= require leaflet
 //= require data
-//= require d3
-//= require topojson
-//= require datamaps
 //= require three
 //= require TrackballControls
 //= require_tree .
